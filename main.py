@@ -1,51 +1,30 @@
-
 from Square import Square
-# from ChessPiece import ChessPiece
 from Pieces import Rook, Knight, Bishop, Queen, King, Pawn
 
-
-def create_squares():
-    board = []
-    for x in range(0,8):
-        for y in range(0,8):
-            board.append(Square(x, y, piece=None))
-    return board
-
-def game_start(board):
-    for square in board:
-        if square.y == 0:
-            if square.x == 0 or square.x== 7 :
-                square.piece = Rook(color='white')
-            if square.x == 1 or square.x== 6 :
-                square.piece = Knight(color='white')
-            if square.x == 2 or square.x== 5 :
-                square.piece = Bishop(color='white')
-            if square.x == 3:
-                square.piece = Queen(color='white')
-            if square.x == 4:
-                square.piece = King(color='white')
-        if square.y == 1:
-            square.piece = Pawn(color='white')
-        if square.y == 7:
-            if square.x == 0 or square.x== 7 :
-                square.piece = Rook(color='black')
-            if square.x == 1 or square.x== 6 :
-                square.piece = Knight(color='black')
-            if square.x == 2 or square.x== 5 :
-                square.piece = Bishop(color='black')
-            if square.x == 3:
-                square.piece = Queen(color='black')
-            if square.x == 4:
-                square.piece = King(color='black')
-        if square.y == 6:
-            square.piece = Pawn(color='black')
-        
+class Board:
+    def __init__(self):
+        self.squares = [[Square(x, y, None) for x in range(8)] for y in range(8)]
 
 
+    def initialize_pieces(self):
+        piece_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+
+        # initialize major and mnior pieces
+        for y, color in ((0, 'white'), (1, 'white'), (6, 'black'), (7, 'black')):
+            for x, piece_class in enumerate(piece_order):
+                self.squares[y][x].piece = piece_class(color=color)
+
+        # initialize pawns
+        for y, color in ((1, 'white'), (6, 'black')):
+            for x in range(8):
+                self.squares[y][x].piece = Pawn(color=color)
+
+   
 if __name__ == '__main__':
-    board = create_squares()
 
-    game_start(board)
+    board = Board()
+    board.initialize_pieces()
 
-    for square in board:
-        print(square)
+    for row in board.squares:
+        for col in row:
+            print(col)
