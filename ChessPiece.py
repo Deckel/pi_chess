@@ -3,8 +3,6 @@ from Square import Square
 
 class ChessPiece(Square):
     def __init__(self, color) -> None:
-        # self.x = x
-        # self.y = y
         self.color = color,
         self.legal_moves = self.calculate_legal_moves()
 
