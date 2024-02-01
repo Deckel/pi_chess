@@ -5,7 +5,6 @@ class Board:
     def __init__(self):
         self.squares = [[Square(x, y, None) for x in range(8)] for y in range(8)]
 
-
     def initialize_pieces(self):
         piece_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
