@@ -8,7 +8,13 @@ class ChessPiece(Square):
 
     def __repr__(self):
         class_name = type(self).__name__
-        return f"{class_name}(color={self.color})"
+
+        # max string length is 8 letters,
+        # so we standardise this by adding spaces 
+        pretty_str = f"{class_name} {self.color[0][0]}"
+        while len(pretty_str) != 8:
+            pretty_str += ' '
+        return pretty_str
 
     def calculate_legal_moves(self):
         pass
