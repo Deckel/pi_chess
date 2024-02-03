@@ -1,8 +1,12 @@
 from ChessPiece import ChessPiece
 
-class Pawn(ChessPiece):
+class Pawn(ChessPiece):    
     def move(self):
         print("Pawn moves forward.")
+        if self.color == 'white':
+            self.y += 1
+        if self.color == 'black':
+            self.y -= 1
 
 class Rook(ChessPiece):
     def move(self):
