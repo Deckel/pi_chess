@@ -1,5 +1,6 @@
 import os
 import re
+import traceback
 
 from Square import Square
 from Pieces import Rook, Knight, Bishop, Queen, King, Pawn
@@ -85,14 +86,40 @@ if __name__ == '__main__':
         else:
             # TODO: Handle the case when no target square is found
             return None
+
     
-    
-    def pgn_str_to_move(pgn_str):
+    def pgn_str_to_target(pgn_str):
         # examples: a4, Kc6, O-O, Bxc6
         pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
         # find square to move too
         target_square = (pgn_x_map[extract_target_square(pgn_str)[0]], int(extract_target_square(pgn_str)[1])-1)
         return target_square
+
+    def pgn_str_to_origin(pgn_str, target_square, board):
+        # initalize a temporary piece in the target position, this wasy we can get all the available
+        # moves of the temporary piece, check if there are any permenant pieces in the position of any of the
+        # available moves, if there is, we can assume this was the piece the player wanted to move
+        origin_square = []
+        # Valid piece symbols in chess
+        valid_pieces = {'K':King, 'Q':Queen, 'R':Rook, 'B':Bishop, 'N':Knight}
+        
+        #TODO: add pawn search
+        
+        #TODO: need to change color here based on move
+        # create temporary piece at target location
+        input_piece = valid_pieces[pgn_str[0]](color='white',x=target_square[0],y=target_square[1])
+        # given the temp target piece, extract all the sqaures a piece could have come from
+
+        origin_search = Square(piece=input_piece, x=target_square[0], y=target_square[1]).piece.legal_moves(board)
+
+        for square in origin_search:
+            if board.squares[square[1]][square[0]].piece.__class__ == input_piece.__class__:
+                origin_square.append(board.squares[square[1]][square[0]])
+
+        if len(origin_square) > 1:
+            raise ValueError('You need to specify which piece you mean to move')
+        
+        return (origin_square[0].x, origin_square[0].y) 
 
     def target_in_legal_moves(target, legal_moves):
         if target not in legal_moves:
@@ -109,35 +136,30 @@ if __name__ == '__main__':
         # fetch user input
         while True:
             try:
-                from_square = pgn_str_to_move(input("Enter a from:"))
-                target_square = pgn_str_to_move(input("Enter a target:"))
-
-                legal_moves = board.squares[from_square[1]][from_square[0]].piece.legal_moves(board)
+                # from_square = pgn_str_to_move(input("Enter a from:"))
+                pgn_str = input("Enter a move:")
+                target_square = pgn_str_to_target(pgn_str)
+                # gicen a target square find origin
+                origin_square = pgn_str_to_origin(pgn_str, target_square, board)
+                legal_moves = board.squares[origin_square[1]][origin_square[0]].piece.legal_moves(board)
                 target_in_legal_moves(target_square, legal_moves)
-            except ValueError:
-                print("Sorry, but that's not a fucking legal move")
+            except ValueError as error:
+                print("Not a valid move", )
+                print(traceback.format_exc())
                 continue
-            except AttributeError:
-                print("Sorry but there is no fucking piece you selected to move")
+            except AttributeError as error:
+                print("Not a valid move", error)
+                print(traceback.format_exc())
+            except IndexError as error:
+                print("Not a valid move", error)
+                print(traceback.format_exc())
+            except TypeError as error:
+                print("Not a valid move", error)
+                print(traceback.format_exc())
             else:
                 break
 
-        board.squares[from_square[1]][from_square[0]].piece.move(target_square)
+        board.squares[origin_square[1]][origin_square[0]].piece.move(target_square)
 
         board.update_pieces()
         
-
-            
-
-    
-
-
-    
-
-
-
-
-
-        
-
-

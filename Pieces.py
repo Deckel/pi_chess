@@ -90,16 +90,16 @@ class Queen(ChessPiece):
         return available_moves
 
 class King(ChessPiece):
-    def available_moves(self):
+    def available_moves(self, board):
         # Hard code basic king moves
         available_moves = [
-            (-1, 0), 
-            (-1, 1),
-            (-1, -1),
-            (0, -1), 
-            (1, -1), 
-            (1, 0),
-            (1, 1)
-            (0, 1),
+            (self.x - 1, self.y    ), 
+            (self.x - 1, self.y + 1),
+            (self.x - 1, self.y - 1),
+            (self.x    , self.y - 1), 
+            (self.x + 1, self.y - 1), 
+            (self.x + 1, self.y    ),
+            (self.x + 1, self.y + 1),
+            (self.x    , self.y + 1)
         ]
         return available_moves
