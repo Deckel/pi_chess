@@ -35,28 +35,25 @@ class Pawn(ChessPiece):
 
 class Rook(ChessPiece):
     def available_moves(self):
-        moves = []
-
-        moves += self.x
-
-        return moves
-
-
-    def move(self):
-        print("Rook moves horizontally or vertically.")
+        available_moves = []
+        return available_moves
 
 class Knight(ChessPiece):
-    def move(self):
-        print("Knight moves in an L-shape.")
+    def available_moves(self):
+        available_moves = []
+        return available_moves
 
 class Bishop(ChessPiece):
-    def move(self):
-        print("Bishop moves diagonally.")
+    def available_moves(self):
+        available_moves = []
+        return available_moves
 
 class Queen(ChessPiece):
-    def move(self):
-        print("Queen moves horizontally, vertically, or diagonally.")
+    def available_moves(self):
+        available_moves = []
+        return available_moves
 
 class King(ChessPiece):
-    def move(self):
-        print("King moves one square in any direction.")
+    def available_moves(self):
+        available_moves = []
+        return available_moves
