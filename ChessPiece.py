@@ -3,8 +3,7 @@ class ChessPiece():
         self.color = color
         self.x = x
         self.y= y
-        self.legal_moves = self.calculate_legal_moves()
-
+        
     def __repr__(self):
         class_name = type(self).__name__
         # max string length is 8 letters,
@@ -14,10 +13,24 @@ class ChessPiece():
             pretty_str += ' '
         return f"{pretty_str}"
 
-    def calculate_legal_moves(self):
-        pass
+    def legal_moves(self, board):
+        avilable_moves = self.__class__.available_moves(self, board)
+
+        # piece cannot move to it's own square
+        avilable_moves = [move for move in avilable_moves if move != (self.x, self.y)]
+
+        # restrict avilable_moves to inside the playing board
+
+        print(avilable_moves)
+
+        # avilable_moves = [(self.x, self.y) for x, y in avilable_moves if 0 <= x <= 7 and 0 <= y <= 7]
+        
+        return avilable_moves
 
     def taken(self):
+        pass
+
+    def move_piece(self):
         pass
 
 
