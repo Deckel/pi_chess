@@ -15,16 +15,10 @@ class ChessPiece():
 
     def legal_moves(self, board):
         avilable_moves = self.__class__.available_moves(self, board)
-
         # piece cannot move to it's own square
         avilable_moves = [move for move in avilable_moves if move != (self.x, self.y)]
-
         # restrict avilable_moves to inside the playing board
-
-        print(avilable_moves)
-
-        # avilable_moves = [(self.x, self.y) for x, y in avilable_moves if 0 <= x <= 7 and 0 <= y <= 7]
-        
+        avilable_moves = [move for move in avilable_moves if 0 <= move[0] <= 7 and 0 <= move[1] <= 7]
         return avilable_moves
 
     def taken(self):
