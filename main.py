@@ -101,28 +101,30 @@ if __name__ == '__main__':
     board = Board()
     board.initialize_pieces()
 
-    # while board.game_end == False:
-    
-    os.system('clear')
-    print(board)
+    while board.game_end == False:
+        
+        os.system('clear')
+        print(board)
 
-    # fetch user input
-    while True:
-        try:
-            from_square = pgn_str_to_move(input("Enter a from:"))
-            target_square = pgn_str_to_move(input("Enter a target:"))
+        # fetch user input
+        while True:
+            try:
+                from_square = pgn_str_to_move(input("Enter a from:"))
+                target_square = pgn_str_to_move(input("Enter a target:"))
 
-            legal_moves = board.squares[from_square[1]][from_square[0]].piece.legal_moves(board)
-            target_in_legal_moves(target_square, legal_moves)
-        except ValueError:
-            print("Sorry, but that's not a fucking legal move")
-            continue
-        else:
-            break
+                legal_moves = board.squares[from_square[1]][from_square[0]].piece.legal_moves(board)
+                target_in_legal_moves(target_square, legal_moves)
+            except ValueError:
+                print("Sorry, but that's not a fucking legal move")
+                continue
+            except AttributeError:
+                print("Sorry but there is no fucking piece you selected to move")
+            else:
+                break
 
-    board.squares[from_square[1]][from_square[0]].piece.move()]
+        board.squares[from_square[1]][from_square[0]].piece.move(target_square)
 
-    board.update_pieces()
+        board.update_pieces()
         
 
             

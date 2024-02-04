@@ -24,7 +24,9 @@ class ChessPiece():
     def taken(self):
         pass
 
-    def move_piece(self):
-        pass
+    def move(self, target_square):
+        self.x = target_square[0]
+        self.y = target_square[1]
+        
 
 
