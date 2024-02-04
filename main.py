@@ -1,7 +1,7 @@
 import os
+import re
 
 from Square import Square
-from ChessPiece import ChessPiece
 from Pieces import Rook, Knight, Bishop, Queen, King, Pawn
 
 class Board:
@@ -10,6 +10,14 @@ class Board:
         self.game_end = self.game_end()
         self.player_turn = 'white'
         self.pgn = ""
+
+    #TODO: use this function to make self.squares, and then change all refernces to
+    #      the array from array[y][x] to array[x][y] (big refactor hehe)
+    def generate_squares(self):
+        squares = [[Square(x, y, None) for x in range(8)] for y in range(8)]
+        transpose_squares = [list(row) for row in zip(*squares)]
+        reversed_transpose_squares = transpose_squares[::-1]
+        return reversed_transpose_squares
 
     def print_board(self):
         board_str = ""
@@ -31,6 +39,7 @@ class Board:
         return board_str
     
     def __repr__(self):
+        #TODO: this prints out like 4 boards and I have no idea why
         class_name = type(self).__name__
         return f"{self.print_board()} \n"
 
@@ -58,25 +67,73 @@ class Board:
                         # remove piece from old square
                         self.squares[square.y][square.x].piece = None
                         
-                    
+    
+
     def game_end(self):
         # will return False or something to indicate the game has ended
         return False
    
 if __name__ == '__main__':
 
+
+    def extract_target_square(move):
+        # Regular expression to match the target square
+        match = re.search(r'([a-hA-H][1-8])', move)
+        if match:
+            # Return the matched target square
+            return match.group(1)
+        else:
+            # TODO: Handle the case when no target square is found
+            return None
+    
+    
+    def pgn_str_to_move(pgn_str):
+        # examples: a4, Kc6, O-O, Bxc6
+        pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
+        # find square to move too
+        target_square = (pgn_x_map[extract_target_square(pgn_str)[0]], int(extract_target_square(pgn_str)[1])-1)
+        return target_square
+
+    def target_in_legal_moves(target, legal_moves):
+        if target not in legal_moves:
+            raise ValueError('Target is not in legal move list')
+
     board = Board()
     board.initialize_pieces()
 
-    while board.game_end == False:
+    # while board.game_end == False:
+    
+    os.system('clear')
+    print(board)
+
+    # fetch user input
+    while True:
+        try:
+            from_square = pgn_str_to_move(input("Enter a from:"))
+            target_square = pgn_str_to_move(input("Enter a target:"))
+
+            legal_moves = board.squares[from_square[1]][from_square[0]].piece.legal_moves(board)
+            target_in_legal_moves(target_square, legal_moves)
+        except ValueError:
+            print("Sorry, but that's not a fucking legal move")
+            continue
+        else:
+            break
+
+    board.squares[from_square[1]][from_square[0]].piece.move()]
+
+    board.update_pieces()
         
-        print(board)
-        
-        pgn_move = input("Enter a move:")
-        
-        board.squares[1][0].piece.move()
-        
-        board.update_pieces()
+
+            
+
+    
+
+
+    
+
+
+
 
 
         
