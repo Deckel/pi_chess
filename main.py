@@ -155,11 +155,10 @@ if __name__ == '__main__':
         # fetch user input
         while True:
             try:
-                # from_square = pgn_str_to_move(input("Enter a from:"))
                 pgn_str = input("Enter a move:")
                 target_square, origin_square = pgn_to_index(pgn_str, board)
             except IndexError as error:
-                # os.system('clear')
+                os.system('clear')
                 print(board)
                 print(f"{pgn_str} is not a valid move")
                 print(traceback.format_exc()) # temp traceback print for debugging
