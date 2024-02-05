@@ -127,15 +127,11 @@ if __name__ == '__main__':
             for square in row:
                 if square.piece is not None:
                     if square.piece.__class__ == origin_piece.__class__ and square.piece.color == origin_piece.color:
-                        print(f"{target_square}, {square.piece}, {square.piece.x}, {square.piece.y}")
                         if target_square in square.piece.legal_moves(board):
-                            print("Appending!")
                             origin_square.append((square.piece.x, square.piece.y))
                             
         #TODO: just choose first valid piece, but handle an exception if there are two in the future
         origin_square = origin_square[0]
-
-        print(f"It looks like you want to move the piece from {origin_square} too {target_square}")
 
         return target_square, origin_square
 
