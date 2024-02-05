@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
     while board.game_end == False:
         
-        os.system('clear')
+        # os.system('clear')
         print(board)
 
         # fetch user input
@@ -159,7 +159,7 @@ if __name__ == '__main__':
                 pgn_str = input("Enter a move:")
                 target_square, origin_square = pgn_to_index(pgn_str, board)
             except IndexError as error:
-                os.system('clear')
+                # os.system('clear')
                 print(board)
                 print(f"{pgn_str} is not a valid move")
                 print(traceback.format_exc()) # temp traceback print for debugging
