@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
     while board.game_end == False:
         
-        # os.system('clear')
+        os.system('clear')
         print(board)
 
         # fetch user input
