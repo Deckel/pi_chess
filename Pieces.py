@@ -25,12 +25,20 @@ class Pawn(ChessPiece):
         # define diagnoal capture
         #TODO: technically this logic could live in the ChessPiece class as a legal move
         # but it kind of is attribute of only the pawn
-        if board.squares[self.y+1*direction][self.x+1].piece:
-            available_moves.append((self.x+1, self.y+1*direction)) # caprure to the right
+        try:
+            if board.squares[self.y+1*direction][self.x+1].piece:
+                available_moves.append((self.x+1, self.y+1*direction)) # caprure to the right
+        except IndexError:
+            # out of bounds of board, we just ignore
+            pass
+            
+        try:
+            if board.squares[self.y+1*direction][self.x-1].piece:
+                available_moves.append((self.x-1, self.y+1*direction)) # caprure to the left
+        except IndexError:
+            # out of bounds of board, we just ignore
+            pass
 
-        if board.squares[self.y+1*direction][self.x-1].piece:
-            available_moves.append((self.x-1, self.y+1*direction)) # caprure to the left
-        
         return available_moves
 
 class Rook(ChessPiece):
