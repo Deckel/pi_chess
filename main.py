@@ -77,49 +77,68 @@ class Board:
 if __name__ == '__main__':
 
 
-    def extract_target_square(move):
-        # Regular expression to match the target square
-        match = re.search(r'([a-hA-H][1-8])', move)
-        if match:
-            # Return the matched target square
-            return match.group(1)
-        else:
-            # TODO: Handle the case when no target square is found
-            return None
+    # def extract_target_square(move):
+    #     # Regular expression to match the target square
+    #     match = re.search(r'([a-h][1-8])', move)
+    #     if match:
+    #         # Return the matched target square
+    #         return match.group(1)
+    #     else:
+    #         # TODO: Handle the case when no target square is found
+    #         return None
 
+    # def pgn_str_to_target(pgn_str):
+    #     # examples: a4, Kc6, O-O, Bxc6
+    #     pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
+    #     # find square to move too
+    #     target_square_str = extract_target_square(pgn_str)
+    #     target_square = (pgn_x_map[target_square_str[0]], int(target_square_str[1])-1)
+    #     return target_square
+
+    # def pgn_str_to_origin(pgn_str, target_square, board):
+    #     # initalize a temporary piece in the target position, this wasy we can get all the available
+    #     # moves of the temporary piece, check if there are any permenant pieces in the position of any of the
+    #     # available moves, if there is, we can assume this was the piece the player wanted to move
+    #     origin_square = []
+    #     # Valid piece symbols in chess
+        
     
-    def pgn_str_to_target(pgn_str):
-        # examples: a4, Kc6, O-O, Bxc6
-        pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
-        # find square to move too
-        target_square = (pgn_x_map[extract_target_square(pgn_str)[0]], int(extract_target_square(pgn_str)[1])-1)
-        return target_square
 
-    def pgn_str_to_origin(pgn_str, target_square, board):
-        # initalize a temporary piece in the target position, this wasy we can get all the available
-        # moves of the temporary piece, check if there are any permenant pieces in the position of any of the
-        # available moves, if there is, we can assume this was the piece the player wanted to move
-        origin_square = []
-        # Valid piece symbols in chess
+    def pgn_to_index(pgn_str, board):
+
+        # Examples Kc4 Bxb2 c4 d7 fxg7 Bxc3+
         valid_pieces = {'K':King, 'Q':Queen, 'R':Rook, 'B':Bishop, 'N':Knight}
+        pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
+                
+        target_square_str = re.search(r'([a-h][1-8])', pgn_str).group(1)
+        target_square = (pgn_x_map[target_square_str[0]], int(target_square_str[1])-1)
         
-        #TODO: add pawn search
-        
-        #TODO: need to change color here based on move
-        # create temporary piece at target location
-        input_piece = valid_pieces[pgn_str[0]](color='white',x=target_square[0],y=target_square[1])
-        # given the temp target piece, extract all the sqaures a piece could have come from
+        # get piece and make a dummy piece to compare, defualt is a pawn
+        origin_piece = Pawn(color='white', x=-1, y=-1) #TODO: make color based on player turn
+        for piece in valid_pieces.keys():
+            if piece in pgn_str:
+                origin_piece = valid_pieces[piece](color='white', x=-1, y=-1)
 
-        origin_search = Square(piece=input_piece, x=target_square[0], y=target_square[1]).piece.legal_moves(board)
+        # find origin square by checking all pieces of class piece that could
+        # move to target square.
+        origin_square = []
 
-        for square in origin_search:
-            if board.squares[square[1]][square[0]].piece.__class__ == input_piece.__class__:
-                origin_square.append(board.squares[square[1]][square[0]])
+        for row in board.squares:
+            for square in row:
+                if square.piece is not None:
+                    if square.piece.__class__ == origin_piece.__class__ and square.piece.color == origin_piece.color:
+                        print(f"{target_square}, {square.piece}, {square.piece.x}, {square.piece.y}")
+                        if target_square in square.piece.legal_moves(board):
+                            print("Appending!")
+                            origin_square.append((square.piece.x, square.piece.y))
+                            
+        #TODO: just choose first valid piece, but handle an exception if there are two in the future
+        origin_square = origin_square[0]
 
-        if len(origin_square) > 1:
-            raise ValueError('You need to specify which piece you mean to move')
-        
-        return (origin_square[0].x, origin_square[0].y) 
+        print(f"It looks like you want to move the piece from {origin_square} too {target_square}")
+
+        return target_square, origin_square
+
 
     def target_in_legal_moves(target, legal_moves):
         if target not in legal_moves:
@@ -138,24 +157,12 @@ if __name__ == '__main__':
             try:
                 # from_square = pgn_str_to_move(input("Enter a from:"))
                 pgn_str = input("Enter a move:")
-                target_square = pgn_str_to_target(pgn_str)
-                # gicen a target square find origin
-                origin_square = pgn_str_to_origin(pgn_str, target_square, board)
-                legal_moves = board.squares[origin_square[1]][origin_square[0]].piece.legal_moves(board)
-                target_in_legal_moves(target_square, legal_moves)
-            except ValueError as error:
-                print("Not a valid move", )
-                print(traceback.format_exc())
-                continue
-            except AttributeError as error:
-                print("Not a valid move", error)
-                print(traceback.format_exc())
+                target_square, origin_square = pgn_to_index(pgn_str, board)
             except IndexError as error:
-                print("Not a valid move", error)
-                print(traceback.format_exc())
-            except TypeError as error:
-                print("Not a valid move", error)
-                print(traceback.format_exc())
+                os.system('clear')
+                print(board)
+                print(f"{pgn_str} is not a valid move")
+                print(traceback.format_exc()) # temp traceback print for debugging
             else:
                 break
 
