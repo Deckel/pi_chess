@@ -19,6 +19,13 @@ class ChessPiece():
         avilable_moves = [move for move in avilable_moves if move != (self.x, self.y)]
         # restrict avilable_moves to inside the playing board
         avilable_moves = [move for move in avilable_moves if 0 <= move[0] <= 7 and 0 <= move[1] <= 7]
+        
+        # make sure it does not pass through any other pieces
+
+
+        # ensure it does not put the king in check
+        
+        
         return avilable_moves
 
     def taken(self):

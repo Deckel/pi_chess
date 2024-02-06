@@ -9,7 +9,8 @@ class Board:
     def __init__(self):
         self.squares = [[Square(x, y, None) for x in range(8)] for y in range(8)]
         self.game_end = self.game_end()
-        self.player_turn = 'white'
+        self.player = 'white',
+        self.turn = 0
         self.pgn = ""
 
     #TODO: use this function to make self.squares, and then change all refernces to
@@ -76,36 +77,7 @@ class Board:
    
 if __name__ == '__main__':
 
-
-    # def extract_target_square(move):
-    #     # Regular expression to match the target square
-    #     match = re.search(r'([a-h][1-8])', move)
-    #     if match:
-    #         # Return the matched target square
-    #         return match.group(1)
-    #     else:
-    #         # TODO: Handle the case when no target square is found
-    #         return None
-
-    # def pgn_str_to_target(pgn_str):
-    #     # examples: a4, Kc6, O-O, Bxc6
-    #     pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
-    #     # find square to move too
-    #     target_square_str = extract_target_square(pgn_str)
-    #     target_square = (pgn_x_map[target_square_str[0]], int(target_square_str[1])-1)
-    #     return target_square
-
-    # def pgn_str_to_origin(pgn_str, target_square, board):
-    #     # initalize a temporary piece in the target position, this wasy we can get all the available
-    #     # moves of the temporary piece, check if there are any permenant pieces in the position of any of the
-    #     # available moves, if there is, we can assume this was the piece the player wanted to move
-    #     origin_square = []
-    #     # Valid piece symbols in chess
-        
-    
-
     def pgn_to_index(pgn_str, board):
-
         # Examples Kc4 Bxb2 c4 d7 fxg7 Bxc3+
         valid_pieces = {'K':King, 'Q':Queen, 'R':Rook, 'B':Bishop, 'N':Knight}
         pgn_x_map = {'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7}
@@ -114,10 +86,10 @@ if __name__ == '__main__':
         target_square = (pgn_x_map[target_square_str[0]], int(target_square_str[1])-1)
         
         # get piece and make a dummy piece to compare, defualt is a pawn
-        origin_piece = Pawn(color='white', x=-1, y=-1) #TODO: make color based on player turn
+        origin_piece = Pawn(color=board.player, x=-1, y=-1)
         for piece in valid_pieces.keys():
             if piece in pgn_str:
-                origin_piece = valid_pieces[piece](color='white', x=-1, y=-1)
+                origin_piece = valid_pieces[piece](color=board.player, x=-1, y=-1)
 
         # find origin square by checking all pieces of class piece that could
         # move to target square.
@@ -135,17 +107,19 @@ if __name__ == '__main__':
 
         return target_square, origin_square
 
-
-    def target_in_legal_moves(target, legal_moves):
-        if target not in legal_moves:
-            raise ValueError('Target is not in legal move list')
-
     board = Board()
     board.initialize_pieces()
 
     while board.game_end == False:
-        
-        os.system('clear')
+
+        # set player
+        if board.turn %2 == 0:
+            board.player = 'white'
+        else:
+            board.player = 'black'
+
+        # print the board
+        # os.system('clear')
         print(board)
 
         # fetch user input
@@ -153,7 +127,10 @@ if __name__ == '__main__':
             try:
                 pgn_str = input("Enter a move:")
                 target_square, origin_square = pgn_to_index(pgn_str, board)
-            except IndexError as error:
+
+                #TODO: Check move does not create a check
+
+            except Exception as error:
                 os.system('clear')
                 print(board)
                 print(f"{pgn_str} is not a valid move")
@@ -161,7 +138,14 @@ if __name__ == '__main__':
             else:
                 break
 
+        # move, update board, and increment turn
         board.squares[origin_square[1]][origin_square[0]].piece.move(target_square)
-
         board.update_pieces()
+        board.turn += 1
+
+        # append pgn
+        board.pgn.join(f'{pgn_str}, ')
+
+        print(board.pgn)
+
         
